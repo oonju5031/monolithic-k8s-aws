@@ -34,7 +34,7 @@ jobs:
 
             -   name: image build and push docker image to ecr
                 env:
-                    REGISTRY: 957143340841.dkr.ecr.us-west-2.amazonaws.com/order-jylee-backend
+                    REGISTRY: 957143340841.dkr.ecr.us-west-2.amazonaws.com
                     REPOSITORY: order-jylee-backend
                     IMAGE_TAG: latest
                 run: |
