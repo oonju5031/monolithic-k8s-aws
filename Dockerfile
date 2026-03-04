@@ -1,8 +1,20 @@
 # jdk image pull
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-alpine as builder
+WORKDIR /app
 
-# jar 파일 위치 지정
-#   - ARG: 매개변수
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} ./backend.jar
-ENTRYPOINT ["java", "-jar", "./backend.jar"]
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+
+RUN chmod +x gradlew
+RUN ./gradlew dependencies
+
+COPY src src
+RUN ./gradlew bootJar
+
+# runtime stage (jre) -> jar
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/*jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -11,6 +11,23 @@ jobs:
         # runner
         runs-on: ubuntu-latest
 
+        # Git Action 명령어 일람: https://docs.github.com/ko/actions
         steps:
-            - name: checkout github
-              uses: actions/checkout@v2
+            -   name: checkout github
+                uses: actions/checkout@v2
+
+            -   name: install kubectl
+                uses: azure/setup-kubectl@v3
+
+            -   name: aws configure
+                uses: aws-actions/configure-aws-credentials@v1
+                with:
+                    aws-access-key-id: ${{secrets.AWS_KEY}}
+                    aws-secret-access-key: ${{secrets.AWS_SECRET}}
+                    aws-region: us-west-2
+
+            -   name: aws eks cluster update
+                run: aws eks update-kubeconfig --region us-west-2 --name lgcns-jylee-cluster
+
+            -   name: aws ecr login
+                uses: aws-actions/amazon-ecr-login@v1
